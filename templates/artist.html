@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{.Artist.Name}} - Artist Details</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="icon" href="/static/favicon.png" type="image/x-icon">
+
+  
+</head>
+<body>
+  
+  <!-- Moving Background -->
+  <div class="blob-outer-container">
+    <div class="blob-inner-container">
+      <div class="blob"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <header>
+    <h1>{{.Artist.Name}}</h1>
+  </header>
+  
+  <main>
+    <div class="main-container">
+      <div class="content-container">
+
+        <!-- Left Section -->
+        <div class="left-content">
+          <section>
+            <h2>Concert Dates</h2>
+            <ul>
+              {{range .Artist.Dates}}
+              <li>{{.}}</li>
+              {{end}}
+            </ul>
+          </section>
+          <section>
+            <h2>Relations</h2>
+            <ul>
+              {{range $location, $dates := .Artist.Relations}}
+              <li><strong>{{$location}}</strong>: {{range $dates}}{{.}}, {{end}}</li>
+              {{end}}
+            </ul>
+          </section>
+        </div>
+
+        <!-- Right Section -->
+        <div class="right-content">
+          <section>
+            <img src="{{.Artist.Image}}" alt="{{.Artist.Name}}" class="artist-image">
+            <p><strong>Members:</strong> {{range .Artist.Members}}{{.}}, {{end}}</p>
+            <p><strong>Creation Date:</strong> {{.Artist.CreationDate}}</p>
+            <p><strong>First Album:</strong> {{.Artist.FirstAlbum}}</p>
+            <section>
+              <h2>Locations</h2>
+              <ul>
+                {{range .Artist.Locations}}
+                <li>{{.}}</li>
+                {{end}}
+              </ul>
+            </section>
+          </section>        
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- Map Section -->
+     <!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <div id="map" style="height: 500px; margin-top: 20px;"></div>
+    
+    <script>
+      const Pins = {{ .PinsJSONStr }};
+      const map = L.map('map').setView([48.8566, 2.3522], 4);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      Pins.forEach(loc => {
+        L.marker([loc.Lat, loc.Lng]).addTo(map)
+          .bindPopup(`<b>${loc.Name}</b>`);
+      });
+    </script>
+
+  </main>
+
+  <div class="button-back">
+    <p><a href="/">Back to Artists Gallery</a></p>
+  </div>
+  
+</body>
+</html>
